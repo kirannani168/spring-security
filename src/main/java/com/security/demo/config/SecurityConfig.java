@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -39,5 +41,24 @@ public class SecurityConfig {
                 .authorities("read")
                 .build();
         return new InMemoryUserDetailsManager(admin, user);
+    }
+
+    /**
+     * Approach 2 for creating in memory users <br/>
+     * <b>NOTE: </b> comment above method to work this
+     */
+    @Bean
+    public InMemoryUserDetailsManager memoryUserDetailsManager(){
+        InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
+        UserDetails admin = User.withUsername("admin").password("admin").authorities("admin").build();
+        UserDetails user = User.withUsername("userTwo").password("userTwo").authorities("read").build();
+        inMemoryUserDetailsManager.createUser(admin);
+        inMemoryUserDetailsManager.createUser(user);
+        return inMemoryUserDetailsManager;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return NoOpPasswordEncoder.getInstance();
     }
 }
